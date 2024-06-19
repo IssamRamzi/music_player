@@ -1,0 +1,1 @@
+clang -o player main.c -Wextra -lraylib -lm -ldl -lrt -lX11
