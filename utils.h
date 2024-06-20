@@ -39,18 +39,23 @@ void addQueue(Music *musics, int *i, Music music){
 }
 
 
-void addAllQueue(Music *musics, int *i,char** musics_str, const char *dirPath) {
+void addAllQueue(Music *musics, int *i, char** musics_str, const char *dirPath)
+{
     DIR *d = opendir(dirPath);
     struct dirent *dir;
 
-    if (d) {
-        while ((dir = readdir(d)) != NULL) {
-            if (checkExtension(dir->d_name, ".mp3")) {
+    if (d)
+    {
+        while ((dir = readdir(d)) != NULL)
+        {
+            if (checkExtension(dir->d_name, ".mp3"))
+            {
                 char filePath[512];
                 snprintf(filePath, sizeof(filePath), "%s/%s", dirPath, dir->d_name);
                 // Load the music file
                 Music music = LoadMusicStream(filePath);
-                musics_str[*i] = dir->d_name;
+                strncpy(musics_str[*i], dir->d_name, 256 - 1);
+                musics_str[*i][256 - 1] = '\0'; // Ensure null-termination
                 addQueue(musics, i, music);
             }
         }
