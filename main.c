@@ -28,7 +28,9 @@ void toggleResumePause(Music music)
 }
 
 int updateMusic(Music *musics, int *i, int max){
-    if(IsKeyPressed(KEY_RIGHT)){
+    if(IsKeyPressed(KEY_RIGHT) ||
+    (GetMusicTimeLength(musics[*i]) - 0.2f) == GetMusicTimePlayed(musics[*i])
+    ){
         StopMusicStream(musics[*i]);
         if(*i < max - 1) (*i) +=1;
         PlayMusicStream(musics[*i]);
@@ -69,27 +71,37 @@ int main(void){
     PlayMusicStream(musics[toPlay]);
     printf("Playing %s\n",musics_str[toPlay]);
     while (!WindowShouldClose())
+{
+    float current_time = GetMusicTimePlayed(musics[toPlay]);
+    float max_time = GetMusicTimeLength(musics[toPlay]);
+
+    toggleResumePause(musics[toPlay]);
+    UpdateMusicStream(musics[toPlay]);
+    char *text = musics_str[toPlay];
+
+    updateMusic(musics, &toPlay, current);
+    
+    BeginDrawing();
+    ClearBackground(WHITE);
+    DrawText(text, 0, 0, 30, BLACK);
+
+    if (IsMusicStreamPlaying(musics[toPlay]))
     {
-        toggleResumePause(musics[toPlay]);
-        UpdateMusicStream(musics[toPlay]);
-        char *text = musics_str[toPlay];
-/*         if(updateMusic(musics,&toPlay, current)){
-            printf("New Music Playing !\n");
-        }
- */
-        updateMusic(musics,&toPlay, current);
-        BeginDrawing();
-        ClearBackground(WHITE);
-        DrawText(text, 0,0,30,BLACK);
-
-        if(IsMusicStreamPlaying(musics[toPlay])){
-            DrawText("Resume",0,80,30,GREEN);
-        }else{
-            DrawText("Pause",0,80,30,RED);
-        }
-
-        EndDrawing();
+        DrawText("Resume", 0, 80, 30, GREEN);
     }
+    else
+    {
+        DrawText("Pause", 0, 80, 30, RED);
+    }
+    
+    char time_info[100];
+    snprintf(time_info, sizeof(time_info), "Current Time: %3.2f / Max Time: %3.2f", current_time, max_time);
+
+    DrawText(time_info, 0, 120, 20, BLACK);
+
+    EndDrawing();
+}
+
     // Free allocated memory
     for (int i = 0; i < MAX_MUSIC; i++)
     {
