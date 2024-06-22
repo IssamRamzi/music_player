@@ -9,6 +9,11 @@
 #define MAX_MUSIC 256
 #define MAX_MUSIC_STRING 256
 
+typedef enum {
+    PLAYING,
+    PAUSED,
+    FINISHED
+}STATUS;
 
 void toggleResumePause(Music music)
 {
